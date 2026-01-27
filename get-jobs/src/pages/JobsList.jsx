@@ -10,9 +10,10 @@ const JobsList = () => {
   const { user, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['activeJobs', searchTerm],
     queryFn: () => jobAPI.getActiveJobs({ search: searchTerm }),
+    keepPreviousData: true, // Keep showing previous data while fetching new data
   });
 
   const handleLogout = () => {
@@ -20,15 +21,7 @@ const JobsList = () => {
     navigate('/login');
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
+  if (isError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-red-500">Error loading jobs: {error.message}</div>
@@ -71,13 +64,23 @@ const JobsList = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-6 py-4 rounded-xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-white transition-all"
+              autoFocus // Optional: Helps focus on mount if desired
             />
+            {isFetching && (
+               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-600"></div>
+               </div>
+            )}
           </div>
         </div>
 
         {/* Job List */}
         <div className="space-y-6">
-          {jobs.length === 0 ? (
+          {isLoading && !jobs.length ? (
+             <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+             </div>
+          ) : jobs.length === 0 ? (
             <div className="p-16 rounded-2xl text-center bg-white border border-gray-200 shadow-sm">
               <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Briefcase size={40} className="text-gray-400" />

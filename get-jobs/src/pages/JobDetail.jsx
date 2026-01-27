@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { jobAPI } from '../api/jobAPI';
+import { useAuth } from '../context/AuthContext';
 import ApplicationModal from '../components/ApplicationModal';
-import { MapPin, Briefcase, BarChart2, DollarSign, Calendar, ArrowLeft, CheckCircle2, Star, GraduationCap, Users, Clock, Globe } from 'lucide-react';
+import { MapPin, Briefcase, BarChart2, DollarSign, Calendar, ArrowLeft, CheckCircle2, Star, GraduationCap, Users, Clock } from 'lucide-react';
 
 const JobDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
   const [showApplyModal, setShowApplyModal] = useState(false);
 
   const { data, isLoading, error } = useQuery({
@@ -15,8 +17,19 @@ const JobDetail = () => {
     queryFn: () => jobAPI.getJobById(id),
   });
 
+  // Fetch user applications to check status
+  const { data: userApplications } = useQuery({
+    queryKey: ['userApplications', user.id],
+    queryFn: () => jobAPI.getUserApplications(user.id),
+    enabled: !!user,
+  });
+
+  const hasApplied = userApplications?.data?.some(app => app.jobId?._id === id || app.jobId === id);
+
   const handleApply = () => {
-    setShowApplyModal(true);
+    if (!hasApplied) {
+      setShowApplyModal(true);
+    }
   };
 
   if (isLoading) {
@@ -67,9 +80,20 @@ const JobDetail = () => {
         </div>
         <button
           onClick={handleApply}
-          className="px-6 py-2 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md shadow-blue-200 text-sm"
+          disabled={hasApplied}
+          className={`px-6 py-2 rounded-lg font-bold text-white transition-colors shadow-md shadow-blue-200 text-sm ${
+            hasApplied 
+              ? 'bg-green-600 hover:bg-green-700 cursor-not-allowed opacity-90' 
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          Apply Now
+          {hasApplied ? (
+            <span className="flex items-center gap-2">
+              <CheckCircle2 size={16} /> Applied
+            </span>
+          ) : (
+            'Apply Now'
+          )}
         </button>
       </nav>
 
@@ -248,9 +272,20 @@ const JobDetail = () => {
                     </div>
                     <button
                         onClick={handleApply}
-                        className="w-full py-3.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 mb-4"
+                        disabled={hasApplied}
+                        className={`w-full py-3.5 rounded-xl font-bold text-white transition-all shadow-lg mb-4 ${
+                          hasApplied
+                            ? 'bg-green-600 shadow-green-200 cursor-not-allowed opacity-90'
+                            : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200 hover:-translate-y-1'
+                        }`}
                     >
-                        Apply Now
+                        {hasApplied ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <CheckCircle2 size={20} /> Application Submitted
+                          </span>
+                        ) : (
+                          'Apply Now'
+                        )}
                     </button>
                     <p className="text-xs text-center text-gray-400">
                         Usually responds within 3 days
