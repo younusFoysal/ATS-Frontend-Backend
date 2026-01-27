@@ -61,22 +61,23 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#04060D' }}>
-      <div className="w-full max-w-md p-8 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-        <h1 className="text-3xl font-bold text-center mb-6" style={{ color: '#04060D' }}>
-          Register
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100">
+        <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">
+          Create Account
         </h1>
+        <p className="text-center text-gray-500 mb-8">Register a new admin account</p>
 
         {error && (
-          <div className="mb-4 p-3 rounded" style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}>
+          <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-              Name
+            <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-700">
+              Full Name
             </label>
             <input
               type="text"
@@ -84,20 +85,15 @@ const Register = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded border-2 focus:outline-none focus:border-blue-500"
-              style={{
-                backgroundColor: '#fff',
-                borderColor: '#143AA2',
-                color: '#04060D'
-              }}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
               placeholder="Enter your name"
               disabled={registerMutation.isPending}
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-              Email
+            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
+              Email Address
             </label>
             <input
               type="email"
@@ -105,19 +101,14 @@ const Register = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded border-2 focus:outline-none focus:border-blue-500"
-              style={{
-                backgroundColor: '#fff',
-                borderColor: '#143AA2',
-                color: '#04060D'
-              }}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
               placeholder="Enter your email"
               disabled={registerMutation.isPending}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
+            <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700">
               Password
             </label>
             <input
@@ -126,19 +117,14 @@ const Register = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded border-2 focus:outline-none focus:border-blue-500"
-              style={{
-                backgroundColor: '#fff',
-                borderColor: '#143AA2',
-                color: '#04060D'
-              }}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
               placeholder="Enter your password"
               disabled={registerMutation.isPending}
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-gray-700">
               Confirm Password
             </label>
             <input
@@ -147,12 +133,7 @@ const Register = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded border-2 focus:outline-none focus:border-blue-500"
-              style={{
-                backgroundColor: '#fff',
-                borderColor: '#143AA2',
-                color: '#04060D'
-              }}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
               placeholder="Confirm your password"
               disabled={registerMutation.isPending}
             />
@@ -160,28 +141,18 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded font-semibold transition-colors hover:opacity-90"
-            style={{
-              backgroundColor: '#143AA2',
-              color: '#D3D4D7'
-            }}
+            className="w-full py-3 rounded-lg font-semibold text-white transition-colors bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={registerMutation.isPending}
           >
             {registerMutation.isPending ? 'Registering...' : 'Register'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p style={{ color: '#04060D' }}>
-            Already have an account?{' '}
-            <Link
-              to="/login"
-              className="font-semibold hover:underline"
-              style={{ color: '#143AA2' }}
-            >
-              Login here
-            </Link>
-          </p>
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-800 hover:underline">
+            Login here
+          </Link>
         </div>
       </div>
     </div>

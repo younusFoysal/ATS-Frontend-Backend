@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { jobAPI } from '../api/jobAPI';
+import { ArrowLeft } from 'lucide-react';
 
 const JobForm = () => {
   const navigate = useNavigate();
@@ -133,85 +134,86 @@ const JobForm = () => {
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#04060D' }}>
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-6 py-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold" style={{ color: '#D3D4D7' }}>
-              {isEditMode ? 'Edit Job' : 'Create New Job'}
-            </h1>
-            <button
-              onClick={() => navigate('/jobs')}
-              className="px-4 py-2 rounded font-semibold"
-              style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
-            >
-              ← Back to Jobs
-            </button>
+            <div>
+               <button
+                  onClick={() => navigate('/jobs')}
+                  className="mb-2 text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1 transition-colors"
+               >
+                  <ArrowLeft size={16} /> Back to Jobs
+               </button>
+               <h1 className="text-3xl font-bold text-gray-900">
+                  {isEditMode ? 'Edit Job Posting' : 'Create New Job Posting'}
+               </h1>
+            </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 rounded" style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}>
+            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm shadow-sm">
+              <span className="font-bold">Error: </span>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="p-6 rounded-lg space-y-4" style={{ backgroundColor: '#D3D4D7' }}>
-              <h2 className="text-xl font-bold mb-4" style={{ color: '#04060D' }}>Basic Information</h2>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4">
+                Basic Information
+              </h2>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Job Title *
+                <label className="block text-sm font-medium mb-2 text-gray-700">
+                  Job Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
                   placeholder="e.g., Senior Data Analyst"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Role *
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
+                    Role <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
                     placeholder="e.g., Data Analyst"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Level *
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
+                    Level <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     name="level"
                     value={formData.level}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                    placeholder="e.g., Entry to Mid-level (0-3 years)"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    placeholder="e.g., Senior, Entry-Level"
                     required
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
                     Location
                   </label>
                   <input
@@ -219,272 +221,244 @@ const JobForm = () => {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                    placeholder="e.g., Remote, New York, USA"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    placeholder="e.g., San Francisco, Remote"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
                     Employment Type
                   </label>
                   <select
                     name="employmentType"
                     value={formData.employmentType}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
                   >
                     <option value="Full-time">Full-time</option>
                     <option value="Part-time">Part-time</option>
                     <option value="Contract">Contract</option>
                     <option value="Internship">Internship</option>
-                    <option value="Remote">Remote</option>
                   </select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Min Salary
-                  </label>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700">
+                  Salary Range
+                </label>
+                <div className="flex gap-4">
                   <input
                     type="number"
                     name="salary.min"
                     value={formData.salary.min}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                    placeholder="50000"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    placeholder="Min"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Max Salary
-                  </label>
                   <input
                     type="number"
                     name="salary.max"
                     value={formData.salary.max}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                    placeholder="80000"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    placeholder="Max"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Currency
-                  </label>
-                  <input
-                    type="text"
+                  <select
                     name="salary.currency"
                     value={formData.salary.currency}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                    placeholder="USD"
-                  />
+                    className="w-32 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                  >
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="BDT">BDT</option>
+                  </select>
                 </div>
               </div>
 
+               <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                >
+                  <option value="active">Active</option>
+                  <option value="draft">Draft</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 space-y-6">
+              <h2 className="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4">Job Description</h2>
+
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Job Description *
+                <label className="block text-sm font-medium mb-2 text-gray-700">
+                  Description *
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
+                  rows="6"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
                   placeholder="Detailed job description..."
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Application Deadline
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
+                    Required Skills (One per line)
                   </label>
-                  <input
-                    type="date"
-                    name="applicationDeadline"
-                    value={formData.applicationDeadline}
+                  <textarea
+                    name="requiredSkills"
+                    value={formData.requiredSkills}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
+                    rows="6"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    placeholder="Java&#10;Python&#10;SQL"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                    Status
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
+                    Preferred Skills (One per line)
                   </label>
-                  <select
-                    name="status"
-                    value={formData.status}
+                  <textarea
+                    name="preferredSkills"
+                    value={formData.preferredSkills}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                    style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  >
-                    <option value="active">Active</option>
-                    <option value="closed">Closed</option>
-                    <option value="draft">Draft</option>
-                  </select>
+                    rows="6"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    placeholder="Docker&#10;Kubernetes"
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Skills and Requirements */}
-            <div className="p-6 rounded-lg space-y-4" style={{ backgroundColor: '#D3D4D7' }}>
-              <h2 className="text-xl font-bold mb-4" style={{ color: '#04060D' }}>Skills & Requirements</h2>
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 space-y-6">
+               <h2 className="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4">Additional Details</h2>
 
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Required Skills (one per line)
-                </label>
-                <textarea
-                  name="requiredSkills"
-                  value={formData.requiredSkills}
-                  onChange={handleChange}
-                  rows="6"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="SQL proficiency&#10;Excel/Google Sheets&#10;Data visualization tools"
-                />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                       Education Requirements
+                    </label>
+                    <textarea
+                      name="educationRequirements"
+                      value={formData.educationRequirements}
+                      onChange={handleChange}
+                      rows="4"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                      placeholder="Bachelor's degree in CS..."
+                    />
+                  </div>
+                   <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                       Soft Skills
+                    </label>
+                    <textarea
+                      name="softSkills"
+                      value={formData.softSkills}
+                      onChange={handleChange}
+                      rows="4"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                      placeholder="Communication&#10;Teamwork"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Preferred Skills (one per line)
-                </label>
-                <textarea
-                  name="preferredSkills"
-                  value={formData.preferredSkills}
-                  onChange={handleChange}
-                  rows="6"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="Python libraries (Pandas, NumPy)&#10;Machine learning basics"
-                />
-              </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                        Responsibilities
+                    </label>
+                    <textarea
+                      name="responsibilities"
+                      value={formData.responsibilities}
+                      onChange={handleChange}
+                      rows="4"
+                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                      placeholder="Lead team..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                        Benefits
+                    </label>
+                    <textarea
+                      name="benefits"
+                      value={formData.benefits}
+                      onChange={handleChange}
+                      rows="4"
+                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                      placeholder="Health insurance&#10;Remote work"
+                    />
+                  </div>
+                 </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Education Requirements (one per line)
-                </label>
-                <textarea
-                  name="educationRequirements"
-                  value={formData.educationRequirements}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="Bachelor's degree in Statistics or related field"
-                />
-              </div>
+                   <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                       Experience Expectations
+                    </label>
+                    <textarea
+                      name="experienceExpectations"
+                      value={formData.experienceExpectations}
+                      onChange={handleChange}
+                      rows="4"
+                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                      placeholder="3+ years of experience..."
+                    />
+                  </div>
+                   <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                       Project Expectations
+                    </label>
+                    <textarea
+                      name="projectExpectations"
+                      value={formData.projectExpectations}
+                      onChange={handleChange}
+                      rows="4"
+                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                      placeholder="Built REST APIs..."
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Soft Skills (one per line)
-                </label>
-                <textarea
-                  name="softSkills"
-                  value={formData.softSkills}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="Strong communication skills&#10;Attention to detail"
-                />
-              </div>
+                 <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
+                        Application Deadline
+                    </label>
+                    <input
+                      type="date"
+                      name="applicationDeadline"
+                      value={formData.applicationDeadline}
+                      onChange={handleChange}
+                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                    />
+                  </div>
             </div>
 
-            {/* Experience & Projects */}
-            <div className="p-6 rounded-lg space-y-4" style={{ backgroundColor: '#D3D4D7' }}>
-              <h2 className="text-xl font-bold mb-4" style={{ color: '#04060D' }}>Experience & Projects</h2>
-
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Experience Expectations (one per line)
-                </label>
-                <textarea
-                  name="experienceExpectations"
-                  value={formData.experienceExpectations}
-                  onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="0-3 years of data analysis experience&#10;Experience with data extraction from databases"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Project Expectations (one per line)
-                </label>
-                <textarea
-                  name="projectExpectations"
-                  value={formData.projectExpectations}
-                  onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="Created dashboards for stakeholders&#10;Performed exploratory data analysis"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Responsibilities (one per line)
-                </label>
-                <textarea
-                  name="responsibilities"
-                  value={formData.responsibilities}
-                  onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="Analyze large datasets&#10;Create reports and dashboards"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                  Benefits (one per line)
-                </label>
-                <textarea
-                  name="benefits"
-                  value={formData.benefits}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full px-4 py-2 rounded border-2 focus:outline-none"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                  placeholder="Health insurance&#10;401(k) matching&#10;Remote work options"
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 pt-4">
               <button
                 type="submit"
                 disabled={isPending}
-                className="flex-1 py-3 rounded font-semibold transition-colors hover:opacity-90"
-                style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
+                className="flex-1 py-3.5 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isPending ? 'Saving...' : isEditMode ? 'Update Job' : 'Create Job'}
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/jobs')}
-                className="px-8 py-3 rounded font-semibold transition-colors hover:opacity-90"
-                style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
+                className="px-8 py-3.5 rounded-lg font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
               >
                 Cancel
               </button>

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationAPI } from '../api/applicationAPI';
 import EvaluationModal from '../components/EvaluationModal';
+import { Mail, FileText, Target, Download, Pin, Video, ArrowLeft } from 'lucide-react';
 
 const ApplicationDetail = () => {
   const navigate = useNavigate();
@@ -93,47 +94,51 @@ const ApplicationDetail = () => {
 
   const getEmotionColor = (emotion) => {
     const colors = {
-      'Happiness': '#3E8DE3',
-      'Neutral': '#D3D4D7',
-      'Sadness': '#143AA2',
-      'Anger': '#8B0000',
-      'Fear': '#4B0082',
-      'Disgust': '#556B2F',
-      'Surprise': '#FF8C00',
-      'Contempt': '#2F4F4F'
+      'Happiness': 'bg-blue-500',
+      'Neutral': 'bg-gray-400',
+      'Sadness': 'bg-indigo-500',
+      'Anger': 'bg-red-600',
+      'Fear': 'bg-purple-600',
+      'Disgust': 'bg-green-600',
+      'Surprise': 'bg-yellow-500',
+      'Contempt': 'bg-slate-600'
     };
-    return colors[emotion] || '#D3D4D7';
+    return colors[emotion] || 'bg-gray-400';
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#04060D' }}>
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="p-4 border-b-2" style={{ borderColor: '#143AA2' }}>
-        <div className="container mx-auto">
+      <div className="bg-white border-b border-gray-200 px-6 py-8 shadow-sm">
+        <div className="container mx-auto max-w-6xl">
           <button
             onClick={() => navigate(-1)}
-            className="mb-4 text-lg hover:opacity-80"
-            style={{ color: '#3E8DE3' }}
+            className="mb-6 text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1 transition-colors"
           >
-            ← Back
+            <ArrowLeft size={16} /> Back to List
           </button>
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold" style={{ color: '#D3D4D7' }}>
+              <h1 className="text-3xl font-bold text-gray-900">
                 {application.applicantName}
               </h1>
-              <p className="text-xl mt-2" style={{ color: '#3E8DE3' }}>
-                {application.applicantEmail}
+              <p className="text-lg text-gray-500 mt-1 flex items-center gap-2">
+                <Mail size={16} className="text-gray-400" /> {application.applicantEmail}
               </p>
             </div>
-            <div className="text-right">
+            <div className="flex flex-col items-end">
               <span
-                className="px-6 py-3 rounded-lg font-bold text-lg uppercase inline-block"
-                style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
+                className={`px-4 py-1.5 rounded-full text-sm font-bold uppercase border mb-2 ${
+                    application.status === 'pending' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                    application.status === 'reviewing' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                    application.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                    application.status === 'accepted' ? 'bg-green-100 text-green-700 border-green-200' :
+                    'bg-red-100 text-red-700 border-red-200'
+                }`}
               >
                 {application.status}
               </span>
-              <p className="mt-2 text-sm" style={{ color: '#D3D4D7' }}>
+              <p className="text-sm text-gray-400">
                 Applied: {new Date(application.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -141,551 +146,274 @@ const ApplicationDetail = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Status Update Section */}
-        <div className="mb-8 p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-          <h2 className="text-2xl font-bold mb-4" style={{ color: '#04060D' }}>
-            Update Application Status
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                New Status
-              </label>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-4 py-2 rounded border-2"
-                style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-              >
-                <option value="">Select status...</option>
-                <option value="pending">Pending</option>
-                <option value="reviewing">Reviewing</option>
-                <option value="shortlisted">Shortlisted</option>
-                <option value="accepted">Accepted</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-                Notes (Optional)
-              </label>
-              <input
-                type="text"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-4 py-2 rounded border-2"
-                style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-                placeholder="Add notes..."
-              />
-            </div>
-          </div>
-          <button
-            onClick={handleStatusUpdate}
-            disabled={!selectedStatus || updateStatusMutation.isPending}
-            className="mt-4 px-6 py-2 rounded font-semibold disabled:opacity-50"
-            style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-          >
-            {updateStatusMutation.isPending ? 'Updating...' : 'Update Status'}
-          </button>
-        </div>
+      <div className="container mx-auto px-6 py-10 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {/* Resume Section */}
-        <div className="mb-8 p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold" style={{ color: '#04060D' }}>
-              📄 Resume Information
-            </h2>
-            <button
-              onClick={handleEvaluate}
-              disabled={evaluateMutation.isPending}
-              className="px-6 py-3 rounded-lg font-bold transition-colors hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
-            >
-              {evaluateMutation.isPending ? 'Evaluating...' : '🎯 Evaluate Candidate'}
-            </button>
-          </div>
-
-          <div className="mb-4">
-            <p className="text-lg" style={{ color: '#04060D' }}>
-              <strong>File:</strong> {application.resumeFileName || 'Resume.pdf'}
-            </p>
-            {application.resumeUrl && (
-              <a
-                href={application.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block px-4 py-2 rounded font-semibold hover:opacity-90"
-                style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-              >
-                📥 Download Resume
-              </a>
-            )}
-          </div>
-
-          {application.parsedResumeData && (
-            <div className="mt-6">
-              <h3 className="text-xl font-bold mb-4" style={{ color: '#143AA2' }}>
-                Candidate Profile
-              </h3>
-
-              {/* Personal Information */}
-              {(application.parsedResumeData.name || application.parsedResumeData.email || application.parsedResumeData.phone || application.parsedResumeData.location) && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Personal Information
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {application.parsedResumeData.name && (
-                      <div>
-                        <p className="text-sm font-semibold" style={{ color: '#143AA2' }}>Full Name</p>
-                        <p style={{ color: '#04060D' }}>{application.parsedResumeData.name}</p>
-                      </div>
-                    )}
-                    {application.parsedResumeData.email && (
-                      <div>
-                        <p className="text-sm font-semibold" style={{ color: '#143AA2' }}>Email</p>
-                        <p style={{ color: '#04060D' }}>{application.parsedResumeData.email}</p>
-                      </div>
-                    )}
-                    {application.parsedResumeData.phone && (
-                      <div>
-                        <p className="text-sm font-semibold" style={{ color: '#143AA2' }}>Phone</p>
-                        <p style={{ color: '#04060D' }}>{application.parsedResumeData.phone}</p>
-                      </div>
-                    )}
-                    {application.parsedResumeData.location && (
-                      <div>
-                        <p className="text-sm font-semibold" style={{ color: '#143AA2' }}>Location</p>
-                        <p style={{ color: '#04060D' }}>{application.parsedResumeData.location}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Skills */}
-              {application.parsedResumeData.skills && application.parsedResumeData.skills.length > 0 && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Skills
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {application.parsedResumeData.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 rounded text-sm font-semibold"
-                        style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Experience */}
-              {application.parsedResumeData.experience && application.parsedResumeData.experience.length > 0 && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Work Experience
-                  </h4>
-                  <div className="space-y-4">
-                    {application.parsedResumeData.experience.map((exp, index) => (
-                      <div key={index} className="border-l-4 pl-4" style={{ borderColor: '#143AA2' }}>
-                        <h5 className="font-bold text-lg" style={{ color: '#04060D' }}>
-                          {exp.title || exp.position || 'Position'}
-                        </h5>
-                        {exp.company && (
-                          <p className="font-semibold" style={{ color: '#143AA2' }}>
-                            {exp.company}
-                          </p>
-                        )}
-                        {(exp.start_date || exp.end_date || exp.duration) && (
-                          <p className="text-sm mb-2" style={{ color: '#143AA2' }}>
-                            {exp.start_date && exp.end_date
-                              ? `${exp.start_date} - ${exp.end_date}`
-                              : exp.duration || 'Duration not specified'}
-                          </p>
-                        )}
-                        {exp.description && (
-                          <p className="text-sm" style={{ color: '#04060D' }}>
-                            {exp.description}
-                          </p>
-                        )}
-                        {exp.responsibilities && Array.isArray(exp.responsibilities) && (
-                          <ul className="text-sm mt-2 list-disc list-inside" style={{ color: '#04060D' }}>
-                            {exp.responsibilities.map((resp, idx) => (
-                              <li key={idx}>{resp}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Education */}
-              {application.parsedResumeData.education && application.parsedResumeData.education.length > 0 && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Education
-                  </h4>
-                  <div className="space-y-4">
-                    {application.parsedResumeData.education.map((edu, index) => (
-                      <div key={index} className="border-l-4 pl-4" style={{ borderColor: '#3E8DE3' }}>
-                        <h5 className="font-bold text-lg" style={{ color: '#04060D' }}>
-                          {edu.degree || edu.qualification || 'Degree'}
-                        </h5>
-                        {edu.institution && (
-                          <p className="font-semibold" style={{ color: '#143AA2' }}>
-                            {edu.institution}
-                          </p>
-                        )}
-                        {(edu.start_date || edu.end_date || edu.year || edu.graduation_year) && (
-                          <p className="text-sm" style={{ color: '#143AA2' }}>
-                            {edu.start_date && edu.end_date
-                              ? `${edu.start_date} - ${edu.end_date}`
-                              : edu.year || edu.graduation_year || 'Year not specified'}
-                          </p>
-                        )}
-                        {edu.field && (
-                          <p className="text-sm" style={{ color: '#04060D' }}>
-                            Field: {edu.field}
-                          </p>
-                        )}
-                        {edu.gpa && (
-                          <p className="text-sm" style={{ color: '#04060D' }}>
-                            GPA: {edu.gpa}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Certifications */}
-              {application.parsedResumeData.certifications && application.parsedResumeData.certifications.length > 0 && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Certifications
-                  </h4>
-                  <div className="space-y-2">
-                    {application.parsedResumeData.certifications.map((cert, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <span style={{ color: '#143AA2' }}>•</span>
-                        <div>
-                          <p className="font-semibold" style={{ color: '#04060D' }}>
-                            {typeof cert === 'string' ? cert : cert.name || cert.title}
-                          </p>
-                          {typeof cert === 'object' && cert.issuer && (
-                            <p className="text-sm" style={{ color: '#143AA2' }}>
-                              Issued by: {cert.issuer}
-                            </p>
-                          )}
-                          {typeof cert === 'object' && cert.date && (
-                            <p className="text-sm" style={{ color: '#143AA2' }}>
-                              Date: {cert.date}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Languages */}
-              {application.parsedResumeData.languages && application.parsedResumeData.languages.length > 0 && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Languages
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {application.parsedResumeData.languages.map((lang, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 rounded text-sm font-semibold"
-                        style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-                      >
-                        {typeof lang === 'string' ? lang : `${lang.name} (${lang.proficiency})`}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Projects */}
-              {application.parsedResumeData.projects && application.parsedResumeData.projects.length > 0 && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Projects
-                  </h4>
-                  <div className="space-y-4">
-                    {application.parsedResumeData.projects.map((project, index) => (
-                      <div key={index} className="border-l-4 pl-4" style={{ borderColor: '#3E8DE3' }}>
-                        <h5 className="font-bold" style={{ color: '#04060D' }}>
-                          {project.name || project.title}
-                        </h5>
-                        {project.description && (
-                          <p className="text-sm mt-1" style={{ color: '#04060D' }}>
-                            {project.description}
-                          </p>
-                        )}
-                        {project.technologies && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {(Array.isArray(project.technologies) ? project.technologies : [project.technologies]).map((tech, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2 py-1 rounded text-xs"
-                                style={{ backgroundColor: '#D3D4D7', color: '#04060D' }}
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Summary/About */}
-              {application.parsedResumeData.summary && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Professional Summary
-                  </h4>
-                  <p style={{ color: '#04060D' }}>
-                    {application.parsedResumeData.summary}
-                  </p>
-                </div>
-              )}
-
-              {/* Additional Information */}
-              {(application.parsedResumeData.linkedin || application.parsedResumeData.github || application.parsedResumeData.website || application.parsedResumeData.portfolio) && (
-                <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                  <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                    Online Presence
-                  </h4>
-                  <div className="space-y-2">
-                    {application.parsedResumeData.linkedin && (
-                      <p>
-                        <span className="font-semibold" style={{ color: '#143AA2' }}>LinkedIn: </span>
-                        <a href={application.parsedResumeData.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#04060D' }}>
-                          {application.parsedResumeData.linkedin}
-                        </a>
-                      </p>
-                    )}
-                    {application.parsedResumeData.github && (
-                      <p>
-                        <span className="font-semibold" style={{ color: '#143AA2' }}>GitHub: </span>
-                        <a href={application.parsedResumeData.github} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#04060D' }}>
-                          {application.parsedResumeData.github}
-                        </a>
-                      </p>
-                    )}
-                    {application.parsedResumeData.website && (
-                      <p>
-                        <span className="font-semibold" style={{ color: '#143AA2' }}>Website: </span>
-                        <a href={application.parsedResumeData.website} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#04060D' }}>
-                          {application.parsedResumeData.website}
-                        </a>
-                      </p>
-                    )}
-                    {application.parsedResumeData.portfolio && (
-                      <p>
-                        <span className="font-semibold" style={{ color: '#143AA2' }}>Portfolio: </span>
-                        <a href={application.parsedResumeData.portfolio} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#04060D' }}>
-                          {application.parsedResumeData.portfolio}
-                        </a>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Cover Letter */}
-        {application.coverLetter && (
-          <div className="mb-8 p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#04060D' }}>
-              📝 Cover Letter
-            </h2>
-            <p className="whitespace-pre-line" style={{ color: '#04060D' }}>
-              {application.coverLetter}
-            </p>
-          </div>
-        )}
-
-        {/* Video Interview Section */}
-        {application.videoInterviewUrl && (
-          <div className="mb-8 p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#04060D' }}>
-              🎥 Video Interview
-            </h2>
-
-            <div className="mb-6">
-              <video
-                controls
-                className="w-full rounded-lg"
-                style={{ maxHeight: '500px', backgroundColor: '#04060D' }}
-              >
-                <source src={application.videoInterviewUrl} type="video/webm" />
-                <source src={application.videoInterviewUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-
-            {videoAnalysis && (
-              <div className="space-y-6">
-                {/* Video Metadata */}
-                {videoAnalysis.video_metadata && (
-                  <div>
-                    <h3 className="text-xl font-bold mb-3" style={{ color: '#143AA2' }}>
-                      Video Information
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="p-3 rounded" style={{ backgroundColor: '#3E8DE3' }}>
-                        <p className="text-sm" style={{ color: '#04060D' }}>Duration</p>
-                        <p className="text-2xl font-bold" style={{ color: '#04060D' }}>
-                          {Math.floor(videoAnalysis.video_metadata.duration_seconds / 60)}:
-                          {(videoAnalysis.video_metadata.duration_seconds % 60).toFixed(0).padStart(2, '0')}
-                        </p>
-                      </div>
-                      <div className="p-3 rounded" style={{ backgroundColor: '#3E8DE3' }}>
-                        <p className="text-sm" style={{ color: '#04060D' }}>Resolution</p>
-                        <p className="text-2xl font-bold" style={{ color: '#04060D' }}>
-                          {videoAnalysis.video_metadata.resolution?.width}x
-                          {videoAnalysis.video_metadata.resolution?.height}
-                        </p>
-                      </div>
-                      <div className="p-3 rounded" style={{ backgroundColor: '#3E8DE3' }}>
-                        <p className="text-sm" style={{ color: '#04060D' }}>FPS</p>
-                        <p className="text-2xl font-bold" style={{ color: '#04060D' }}>
-                          {videoAnalysis.video_metadata.fps}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Emotion Analysis */}
-                {videoAnalysis.emotions && (
-                  <div>
-                    <h3 className="text-xl font-bold mb-3" style={{ color: '#143AA2' }}>
-                      Emotion Analysis
-                    </h3>
-
-                    <div className="mb-4 p-4 rounded" style={{ backgroundColor: '#143AA2' }}>
-                      <p className="text-lg" style={{ color: '#D3D4D7' }}>
-                        <strong>Dominant Emotion:</strong> {videoAnalysis.emotions.dominant_emotion}
-                      </p>
-                      {videoAnalysis.processing_info && (
-                        <p className="text-sm mt-2" style={{ color: '#D3D4D7' }}>
-                          Analyzed {videoAnalysis.processing_info.emotion_frames_analyzed} frames
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      {videoAnalysis.emotions.distribution?.map((emotion, index) => (
-                        <div key={index}>
-                          <div className="flex justify-between mb-1">
-                            <span style={{ color: '#04060D' }}>{emotion.emotion}</span>
-                            <span style={{ color: '#04060D' }}>{emotion.score.toFixed(2)}%</span>
-                          </div>
-                          <div className="w-full rounded-full h-4" style={{ backgroundColor: '#fff' }}>
-                            <div
-                              className="h-4 rounded-full transition-all"
-                              style={{
-                                width: `${emotion.score}%`,
-                                backgroundColor: getEmotionColor(emotion.emotion)
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Transcript */}
-                {videoAnalysis.subtitles && (
-                  <div>
-                    <h3 className="text-xl font-bold mb-3" style={{ color: '#143AA2' }}>
-                      Interview Transcript
-                    </h3>
-
-                    {videoAnalysis.subtitles.full_text && (
-                      <div className="mb-4 p-4 rounded" style={{ backgroundColor: '#fff', borderLeft: '4px solid #143AA2' }}>
-                        <p className="text-lg leading-relaxed" style={{ color: '#04060D' }}>
-                          {videoAnalysis.subtitles.full_text}
-                        </p>
-                      </div>
-                    )}
-
-                    {videoAnalysis.subtitles.segments && videoAnalysis.subtitles.segments.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-                          Transcript Timeline
-                        </h4>
-                        <div className="space-y-3">
-                          {videoAnalysis.subtitles.segments.map((segment, index) => (
-                            <div
-                              key={index}
-                              className="p-3 rounded"
-                              style={{ backgroundColor: '#fff', borderLeft: '3px solid #3E8DE3' }}
+            {/* Left Column: Status & Evaluation & Resume */}
+            <div className="lg:col-span-2 space-y-8">
+                 {/* Resume Section */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <FileText size={20} className="text-gray-500" /> Resume & Profile
+                        </h2>
+                         <button
+                            onClick={handleEvaluate}
+                            disabled={evaluateMutation.isPending}
+                            className="px-4 py-2 rounded-lg font-medium text-sm text-blue-700 bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-all flex items-center gap-2 disabled:opacity-50"
                             >
-                              <p className="text-sm mb-1" style={{ color: '#143AA2' }}>
-                                <strong>
-                                  {Math.floor(segment.start / 60)}:
-                                  {(segment.start % 60).toFixed(1).padStart(4, '0')} -
-                                  {Math.floor(segment.end / 60)}:
-                                  {(segment.end % 60).toFixed(1).padStart(4, '0')}
-                                </strong>
-                              </p>
-                              <p style={{ color: '#04060D' }}>{segment.text}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Processing Info */}
-                {videoAnalysis.processing_info && (
-                  <div className="p-4 rounded" style={{ backgroundColor: '#fff' }}>
-                    <h4 className="text-lg font-bold mb-2" style={{ color: '#04060D' }}>
-                      Analysis Details
-                    </h4>
-                    <div className="text-sm space-y-1" style={{ color: '#04060D' }}>
-                      <p><strong>Emotion Model:</strong> {videoAnalysis.processing_info.emotion_model}</p>
-                      <p><strong>Frames Analyzed:</strong> {videoAnalysis.processing_info.emotion_frames_analyzed}</p>
-                      <p><strong>Subtitle Segments:</strong> {videoAnalysis.processing_info.subtitle_segments_count}</p>
+                            {evaluateMutation.isPending ? 'Evaluating...' : <><Target size={16} /> Evaluate Candidate</>}
+                        </button>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Admin Notes */}
-        {application.notes && (
-          <div className="p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#04060D' }}>
-              📌 Admin Notes
-            </h2>
-            <p style={{ color: '#04060D' }}>{application.notes}</p>
-          </div>
-        )}
+                    <div className="p-6">
+                        <div className="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div className="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-xl">
+                                <FileText size={20} />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-medium text-gray-900">{application.resumeFileName || 'Resume.pdf'}</p>
+                                <p className="text-xs text-gray-500">Uploaded Resume</p>
+                            </div>
+                            {application.resumeUrl && (
+                            <a
+                                href={application.resumeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                            >
+                                <Download size={16} /> Download
+                            </a>
+                            )}
+                        </div>
+
+                        {application.parsedResumeData && (
+                            <div className="space-y-8">
+                                {/* Personal Info */}
+                                <div>
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Personal Details</h3>
+                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {[
+                                            { label: 'Full Name', value: application.parsedResumeData.name },
+                                            { label: 'Email', value: application.parsedResumeData.email },
+                                            { label: 'Phone', value: application.parsedResumeData.phone },
+                                            { label: 'Location', value: application.parsedResumeData.location }
+                                        ].map((item, i) => item.value && (
+                                            <div key={i} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+                                                <p className="font-medium text-gray-900 text-sm">{item.value}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Skills */}
+                                {application.parsedResumeData.skills?.length > 0 && (
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Skills</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {application.parsedResumeData.skills.map((skill, index) => (
+                                                <span key={index} className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-semibold border border-blue-100">
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Experience */}
+                                {application.parsedResumeData.experience?.length > 0 && (
+                                     <div>
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Work Experience</h3>
+                                        <div className="space-y-4">
+                                            {application.parsedResumeData.experience.map((exp, index) => (
+                                                <div key={index} className="relative pl-6 border-l-2 border-blue-200 pb-2">
+                                                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
+                                                    <h4 className="font-bold text-gray-900 text-lg leading-tight">{exp.title || exp.position || 'Position'}</h4>
+                                                    <p className="text-blue-600 font-medium mb-1">{exp.company}</p>
+                                                    <p className="text-xs text-gray-500 mb-2">
+                                                        {exp.start_date && exp.end_date
+                                                        ? `${exp.start_date} - ${exp.end_date}`
+                                                        : exp.duration || 'Duration not specified'}
+                                                    </p>
+                                                    <p className="text-gray-600 text-sm">{exp.description}</p>
+                                                     {exp.responsibilities && Array.isArray(exp.responsibilities) && (
+                                                        <ul className="text-sm mt-2 list-disc list-inside text-gray-600">
+                                                            {exp.responsibilities.map((resp, idx) => (
+                                                            <li key={idx}>{resp}</li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                 {/* Education */}
+                                {application.parsedResumeData.education?.length > 0 && (
+                                     <div>
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Education</h3>
+                                        <div className="space-y-4">
+                                            {application.parsedResumeData.education.map((edu, index) => (
+                                                <div key={index} className="relative pl-6 border-l-2 border-purple-200 pb-2">
+                                                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-purple-100 border-2 border-purple-500"></div>
+                                                    <h4 className="font-bold text-gray-900 text-lg leading-tight">{edu.degree || edu.qualification}</h4>
+                                                    <p className="text-purple-600 font-medium mb-1">{edu.institution}</p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {edu.start_date && edu.end_date
+                                                        ? `${edu.start_date} - ${edu.end_date}`
+                                                        : edu.year || edu.graduation_year}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                 {/* Cover Letter */}
+                {application.coverLetter && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><FileText size={20} className="text-gray-500" /> Cover Letter</h2>
+                    </div>
+                    <div className="p-6">
+                        <p className="whitespace-pre-line text-gray-700 leading-relaxed">
+                            {application.coverLetter}
+                        </p>
+                    </div>
+                </div>
+                )}
+            </div>
+
+            {/* Right Column: Actions & Video */}
+            <div className="space-y-8">
+                 {/* Status Update Card */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-6">
+                     <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+                        <h2 className="text-lg font-bold text-gray-900">Application Action</h2>
+                    </div>
+                    <div className="p-6 space-y-4">
+                         <div>
+                            <label className="block text-sm font-medium mb-2 text-gray-700">Change Status</label>
+                            <select
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all"
+                            >
+                                <option value="">Select status...</option>
+                                <option value="pending">Pending</option>
+                                <option value="reviewing">Reviewing</option>
+                                <option value="shortlisted">Shortlisted</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-gray-700">Admin Notes</label>
+                            <textarea
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all min-h-[100px]"
+                                placeholder="Internal notes..."
+                            />
+                        </div>
+                        <button
+                            onClick={handleStatusUpdate}
+                            disabled={!selectedStatus || updateStatusMutation.isPending}
+                            className="w-full py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {updateStatusMutation.isPending ? 'Updating...' : 'Update Status'}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Admin Notes Display */}
+                {application.notes && (
+                     <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
+                        <h2 className="text-sm font-bold text-yellow-800 uppercase tracking-wide mb-2 flex items-center gap-2"><Pin size={16} /> Previous Notes</h2>
+                        <p className="text-yellow-900">{application.notes}</p>
+                    </div>
+                )}
+
+                 {/* Video Interview */}
+                 {application.videoInterviewUrl && (
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+                            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Video size={20} className="text-gray-500" /> Video Interview</h2>
+                        </div>
+                        <div className="p-6 space-y-6">
+                             <div className="rounded-lg overflow-hidden bg-black aspect-video">
+                                <video controls className="w-full h-full object-contain">
+                                    <source src={application.videoInterviewUrl} type="video/webm" />
+                                    <source src={application.videoInterviewUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                             </div>
+
+                             {videoAnalysis && (
+                                <div className="space-y-6">
+                                    {/* Metrics */}
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <div className="p-3 bg-gray-50 rounded-lg text-center border border-gray-100">
+                                             <div className="text-xs text-gray-500 uppercase">Duration</div>
+                                            <div className="font-bold text-gray-900">
+                                                 {videoAnalysis.video_metadata ? Math.floor(videoAnalysis.video_metadata.duration_seconds / 60) + ':' + (videoAnalysis.video_metadata.duration_seconds % 60).toFixed(0).padStart(2, '0') : '-'}
+                                            </div>
+                                        </div>
+                                         <div className="p-3 bg-gray-50 rounded-lg text-center border border-gray-100">
+                                             <div className="text-xs text-gray-500 uppercase">Res</div>
+                                            <div className="font-bold text-gray-900">720p</div>
+                                        </div>
+                                         <div className="p-3 bg-gray-50 rounded-lg text-center border border-gray-100">
+                                             <div className="text-xs text-gray-500 uppercase">FPS</div>
+                                            <div className="font-bold text-gray-900">{videoAnalysis.video_metadata?.fps || 30}</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Emotions */}
+                                    {videoAnalysis.emotions && (
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-900 mb-3">Emotion Analysis</h3>
+                                        <div className="space-y-3">
+                                            {videoAnalysis.emotions.distribution?.slice(0, 5).map((emotion, index) => (
+                                                <div key={index}>
+                                                     <div className="flex justify-between text-xs mb-1">
+                                                        <span className="text-gray-700 font-medium">{emotion.emotion}</span>
+                                                        <span className="text-gray-500">{emotion.score.toFixed(1)}%</span>
+                                                    </div>
+                                                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full ${getEmotionColor(emotion.emotion)}`}
+                                                            style={{ width: `${emotion.score}%` }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    )}
+
+                                    {/* Transcript Snippet */}
+                                     {videoAnalysis.subtitles?.full_text && (
+                                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                            <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Transcript Preview</h3>
+                                            <p className="text-sm text-gray-600 line-clamp-4 italic">
+                                                "{videoAnalysis.subtitles.full_text}"
+                                            </p>
+                                        </div>
+                                     )}
+                                </div>
+                             )}
+                        </div>
+                    </div>
+                 )}
+            </div>
+        </div>
       </div>
 
       {/* Evaluation Modal */}

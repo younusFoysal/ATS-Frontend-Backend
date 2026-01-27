@@ -48,22 +48,23 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-md p-8 rounded-lg border-2" style={{ backgroundColor: '#D3D4D7', borderColor: '#143AA2' }}>
-        <h1 className="text-3xl font-bold text-center mb-6" style={{ color: '#04060D' }}>
-          Login
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100">
+        <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">
+          Welcome Back
         </h1>
+        <p className="text-center text-gray-500 mb-8">Sign in to the Admin Dashboard</p>
 
         {error && (
-          <div className="mb-4 p-3 rounded" style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}>
+          <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
-              Email
+            <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">
+              Email Address
             </label>
             <input
               type="email"
@@ -71,19 +72,14 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded border-2 focus:outline-none focus:border-blue-500"
-              style={{
-                backgroundColor: '#fff',
-                borderColor: '#143AA2',
-                color: '#04060D'
-              }}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
               placeholder="Enter your email"
               disabled={loginMutation.isPending}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-2" style={{ color: '#04060D' }}>
+            <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700">
               Password
             </label>
             <input
@@ -92,12 +88,7 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded border-2 focus:outline-none focus:border-blue-500"
-              style={{
-                backgroundColor: '#fff',
-                borderColor: '#143AA2',
-                color: '#04060D'
-              }}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
               placeholder="Enter your password"
               disabled={loginMutation.isPending}
             />
@@ -105,28 +96,18 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded font-semibold transition-colors hover:opacity-90"
-            style={{
-              backgroundColor: '#143AA2',
-              color: '#D3D4D7'
-            }}
             disabled={loginMutation.isPending}
+            className="w-full py-3 rounded-lg font-semibold text-white transition-colors bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loginMutation.isPending ? 'Logging in...' : 'Login'}
+            {loginMutation.isPending ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p style={{ color: '#04060D' }}>
-            Don't have an account?{' '}
-            <Link
-              to="/register"
-              className="font-semibold hover:underline"
-              style={{ color: '#143AA2' }}
-            >
-              Register here
-            </Link>
-          </p>
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-semibold text-blue-600 hover:text-blue-800 hover:underline">
+            Create Admin Account
+          </Link>
         </div>
       </div>
     </div>
