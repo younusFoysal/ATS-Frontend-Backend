@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { jobAPI } from '../api/jobAPI';
+import { Video, Mic, StopCircle, RotateCcw, Check, RefreshCw, AlertCircle, Camera } from 'lucide-react';
 
 const VideoInterview = ({ applicationId, onComplete, onCancel }) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -160,34 +161,33 @@ const VideoInterview = ({ applicationId, onComplete, onCancel }) => {
   }, [showPreview, recordedChunks]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-full flex flex-col">
       {/* Instructions */}
       {!isRecording && !showPreview && (
-        <div className="p-6 rounded-lg" style={{ backgroundColor: '#3E8DE3' }}>
-          <h3 className="text-xl font-bold mb-4" style={{ color: '#04060D' }}>
-            📹 Video Interview Instructions
+        <div className="p-6 rounded-xl bg-blue-50 border border-blue-100 mb-2">
+          <h3 className="text-lg font-bold mb-4 text-blue-900 flex items-center gap-2">
+            <Video size={20} /> Video Interview Instructions
           </h3>
-          <div className="space-y-3" style={{ color: '#04060D' }}>
-            <p>• This interview should be <strong>5-10 minutes</strong> long</p>
-            <p>• Please answer the following questions</p>
-            <p>• <strong>Speak only in English</strong></p>
-            <p>• Ensure good lighting and minimal background noise</p>
-            <p>• Look at the camera while speaking</p>
+          <div className="space-y-3 text-blue-800 text-sm">
+            <p className="flex items-start gap-2"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div> Make sure your response is <strong>5-10 minutes</strong> long</p>
+            <p className="flex items-start gap-2"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div> Please answer all the questions below</p>
+            <p className="flex items-start gap-2"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div> <strong>Speak only in English</strong> clearly</p>
+            <p className="flex items-start gap-2"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5"></div> Ensure proper lighting and a quiet environment</p>
           </div>
         </div>
       )}
 
       {/* Questions */}
       {!isRecording && !showPreview && (
-        <div className="p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-          <h3 className="text-lg font-bold mb-4" style={{ color: '#04060D' }}>
-            Questions to Answer:
+        <div className="p-6 rounded-xl bg-gray-50 border border-gray-200">
+          <h3 className="text-sm font-bold mb-4 text-gray-500 uppercase tracking-wide">
+            Questions to Answer
           </h3>
-          <ol className="space-y-3" style={{ color: '#04060D' }}>
+          <ol className="space-y-4 text-gray-700">
             {questions.map((question, index) => (
-              <li key={index} className="flex">
-                <span className="font-bold mr-2">{index + 1}.</span>
-                <span>{question}</span>
+              <li key={index} className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 text-xs font-bold">{index + 1}</span>
+                <span className="font-medium text-sm pt-0.5">{question}</span>
               </li>
             ))}
           </ol>
@@ -196,126 +196,87 @@ const VideoInterview = ({ applicationId, onComplete, onCancel }) => {
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 rounded" style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}>
-          {error}
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm flex items-start gap-2">
+          <AlertCircle size={18} className="mt-0.5 shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
-      {/* Camera Preview / Recording */}
-      {!showPreview && (
-        <div className="relative rounded-lg overflow-hidden" style={{ backgroundColor: '#04060D' }}>
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            className="w-full"
-            style={{ maxHeight: '500px', objectFit: 'cover' }}
-          />
-
-          {/* Recording Indicator */}
-          {isRecording && (
-            <div className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 rounded-full" style={{ backgroundColor: 'rgba(212, 51, 51, 0.9)' }}>
-              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-              <span className="text-white font-bold">{formatTime(recordingTime)} / 10:00</span>
-            </div>
-          )}
-
-          {/* Recording Status */}
-          {isRecording && (
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full" style={{ backgroundColor: 'rgba(4, 6, 13, 0.8)' }}>
-              <span className="text-white font-bold">Recording in progress...</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Preview */}
-      {showPreview && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-lg" style={{ backgroundColor: '#3E8DE3' }}>
-            <h3 className="text-lg font-bold" style={{ color: '#04060D' }}>
-              📹 Review Your Recording
-            </h3>
-            <p style={{ color: '#04060D' }}>Duration: {formatTime(recordingTime)}</p>
-          </div>
-          <div className="rounded-lg overflow-hidden" style={{ backgroundColor: '#04060D' }}>
+      {/* Video Recorder/Player Area */}
+      <div className={`relative bg-black rounded-2xl overflow-hidden shadow-lg border border-gray-800 flex-1 min-h-[300px] flex items-center justify-center ${!isRecording && !showPreview ? 'hidden' : 'block'}`}>
+        {!showPreview ? (
+          <>
             <video
-              ref={previewVideoRef}
-              controls
-              className="w-full"
-              style={{ maxHeight: '500px', objectFit: 'cover' }}
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-full h-full object-cover transform scale-x-[-1]" // Mirror effect
             />
-          </div>
-        </div>
-      )}
-
-      {/* Controls */}
-      <div className="flex gap-4 justify-center">
-        {!isRecording && !showPreview && (
-          <>
-            <button
-              onClick={startRecording}
-              className="px-8 py-4 rounded-lg font-bold text-lg transition-colors hover:opacity-90"
-              style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-            >
-              📹 Open Camera and Record
-            </button>
-            <button
-              onClick={onCancel}
-              className="px-8 py-4 rounded-lg font-bold text-lg transition-colors hover:opacity-90"
-              style={{ backgroundColor: '#D3D4D7', color: '#04060D' }}
-            >
-              Cancel
-            </button>
+            {isRecording && (
+              <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2 text-xs font-bold animate-pulse">
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+                {formatTime(recordingTime)}
+              </div>
+            )}
           </>
-        )}
-
-        {isRecording && (
-          <button
-            onClick={stopRecording}
-            className="px-12 py-4 rounded-lg font-bold text-xl transition-colors hover:opacity-90"
-            style={{ backgroundColor: '#D3D4D7', color: '#04060D' }}
-          >
-            ⏹️ Stop Recording
-          </button>
-        )}
-
-        {showPreview && (
-          <>
-            <button
-              onClick={handleDone}
-              disabled={uploadMutation.isPending}
-              className="px-8 py-4 rounded-lg font-bold text-lg transition-colors hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-            >
-              {uploadMutation.isPending ? 'Uploading...' : '✓ Done - Submit Interview'}
-            </button>
-            <button
-              onClick={handleRetake}
-              disabled={uploadMutation.isPending}
-              className="px-8 py-4 rounded-lg font-bold text-lg transition-colors hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
-            >
-              🔄 Retake
-            </button>
-            <button
-              onClick={onCancel}
-              disabled={uploadMutation.isPending}
-              className="px-8 py-4 rounded-lg font-bold text-lg transition-colors hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: '#D3D4D7', color: '#04060D' }}
-            >
-              Cancel
-            </button>
-          </>
+        ) : (
+          <video
+            ref={previewVideoRef}
+            controls
+            className="w-full h-full object-contain"
+          />
         )}
       </div>
 
-      {/* Important Note */}
-      <div className="p-4 rounded-lg border-2" style={{ backgroundColor: '#D3D4D7', borderColor: '#143AA2' }}>
-        <p className="text-sm text-center font-semibold" style={{ color: '#143AA2' }}>
-          ⚠️ Important: Please speak only in English during the interview
-        </p>
+      {/* Controls */}
+      <div className="flex justify-center gap-4 pt-2">
+        {!isRecording && !showPreview ? (
+          <>
+            <button
+              onClick={onCancel}
+              className="px-6 py-3 rounded-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={startRecording}
+              className="px-8 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex items-center gap-2"
+            >
+              <Camera size={20} /> Open Camera & Record
+            </button>
+          </>
+        ) : isRecording ? (
+          <button
+            onClick={stopRecording}
+            className="px-8 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-lg shadow-red-200 flex items-center gap-2"
+          >
+            <StopCircle size={20} /> Stop Recording
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handleRetake}
+              className="px-6 py-3 rounded-xl font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-2"
+            >
+              <RefreshCw size={18} /> Retake
+            </button>
+            <button
+              onClick={handleDone}
+              disabled={uploadMutation.isPending}
+              className="px-8 py-3 rounded-xl font-bold text-white bg-green-600 hover:bg-green-700 transition-colors shadow-lg shadow-green-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {uploadMutation.isPending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Uploading...
+                </>
+              ) : (
+                <>Submit Interview <Check size={20} /></>
+              )}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

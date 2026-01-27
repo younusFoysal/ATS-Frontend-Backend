@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { jobAPI } from '../api/jobAPI';
 import { useAuth } from '../context/AuthContext';
 import VideoInterview from './VideoInterview';
+import { UploadCloud, FileText, CheckCircle2, X, User, Mail, AlertCircle, ArrowRight } from 'lucide-react';
 
 const ApplicationModal = ({ isOpen, onClose, job }) => {
   const { user } = useAuth();
@@ -132,20 +133,18 @@ const ApplicationModal = ({ isOpen, onClose, job }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
       <div
-        className="rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        style={{ backgroundColor: '#D3D4D7' }}
+        className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="sticky top-0 p-6 border-b-2" style={{ backgroundColor: '#D3D4D7', borderColor: '#143AA2' }}>
-          <div className="flex justify-between items-start">
+        <div className="px-8 py-5 border-b border-gray-100 bg-gray-50/80 flex justify-between items-center sticky top-0 z-10">
             <div>
-              <h2 className="text-2xl font-bold mb-2" style={{ color: '#04060D' }}>
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                 {step === 1 ? `Apply for ${job.title}` : 'Video Interview'}
               </h2>
-              <p className="text-sm" style={{ color: '#143AA2' }}>
-                {step === 1 ? `${job.role} • ${job.level}` : 'Step 2 of 2'}
+              <p className="text-xs text-gray-500 mt-0.5">
+                {step === 1 ? `${job.role} • ${job.level}` : 'Step 2 of 2: Let us know you better'}
               </p>
             </div>
             <button
@@ -156,176 +155,160 @@ const ApplicationModal = ({ isOpen, onClose, job }) => {
                   onClose();
                 }
               }}
-              className="text-2xl font-bold hover:opacity-70 transition-opacity"
-              style={{ color: '#04060D' }}
+              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-600 flex items-center justify-center transition-colors text-lg font-bold"
             >
-              ×
+              <X size={20} />
             </button>
-          </div>
         </div>
 
         {/* Body - Step 1: Resume Upload */}
         {step === 1 && (
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="p-8 overflow-y-auto custom-scrollbar space-y-6">
           {error && (
-            <div className="p-4 rounded" style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}>
-              {error}
+            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm flex items-start gap-2">
+              <AlertCircle size={18} className="mt-0.5 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="p-4 rounded" style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}>
-              <strong>✓ Resume submitted successfully!</strong>
-              <p className="mt-2">Moving to video interview step...</p>
-              <p className="mt-1 text-sm">Your resume is being parsed in the background.</p>
+            <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm flex items-start gap-2">
+              <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
+              <div>
+                <strong>Resume submitted successfully!</strong>
+                <p className="mt-1">Moving to video interview step...</p>
+                <p className="mt-1 text-xs opacity-80">Your resume is being parsed in the background.</p>
+              </div>
             </div>
           )}
 
           {/* Applicant Info */}
-          <div>
-            <h3 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-              Applicant Information
+          <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 space-y-4">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+              <User size={16} /> Applicant Information
             </h3>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: '#04060D' }}>
-                  Name
-                </label>
-                <input
-                  type="text"
-                  value={user.name}
-                  disabled
-                  className="w-full px-4 py-2 rounded border-2"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D', opacity: 0.7 }}
-                />
+                <label className="block text-xs font-medium mb-1.5 text-gray-500">Name</label>
+                <div className="relative">
+                    <User size={16} className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                    type="text"
+                    value={user.name}
+                    disabled
+                    className="w-full pl-9 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-600 text-sm focus:outline-none"
+                    />
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: '#04060D' }}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={user.email}
-                  disabled
-                  className="w-full px-4 py-2 rounded border-2"
-                  style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D', opacity: 0.7 }}
-                />
+                <label className="block text-xs font-medium mb-1.5 text-gray-500">Email</label>
+                <div className="relative">
+                    <Mail size={16} className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                    type="email"
+                    value={user.email}
+                    disabled
+                    className="w-full pl-9 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-600 text-sm focus:outline-none"
+                    />
+                </div>
               </div>
             </div>
           </div>
 
           {/* Resume Upload */}
           <div>
-            <h3 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-              Upload Resume *
-            </h3>
+            <label className="block text-sm font-medium mb-2 text-gray-700">
+              Resume / CV (PDF) <span className="text-red-500">*</span>
+            </label>
             <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                dragActive ? 'border-opacity-100' : 'border-opacity-50'
+              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer bg-white ${
+                dragActive 
+                  ? 'border-blue-500 bg-blue-50' 
+                  : resumeFile 
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
               }`}
-              style={{ borderColor: '#143AA2' }}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
+              onClick={() => document.getElementById('resume-upload').click()}
             >
+              <input
+                type="file"
+                id="resume-upload"
+                className="hidden"
+                accept="application/pdf"
+                onChange={handleFileChange}
+              />
+
               {resumeFile ? (
-                <div>
-                  <div className="text-4xl mb-2">📄</div>
-                  <p className="font-semibold" style={{ color: '#04060D' }}>
-                    {resumeFile.name}
-                  </p>
-                  <p className="text-sm mt-1" style={{ color: '#143AA2' }}>
-                    {(resumeFile.size / 1024).toFixed(2)} KB
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setResumeFile(null)}
-                    className="mt-3 px-4 py-2 rounded font-semibold hover:opacity-90"
-                    style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-                  >
-                    Remove File
-                  </button>
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-3">
+                    <CheckCircle2 size={24} />
+                  </div>
+                  <p className="font-medium text-green-800">{resumeFile.name}</p>
+                  <p className="text-green-600 text-xs mt-1">{(resumeFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xs text-gray-500 mt-2">Click to replace</p>
                 </div>
               ) : (
-                <div>
-                  <div className="text-4xl mb-2">📁</div>
-                  <p className="font-semibold mb-2" style={{ color: '#04060D' }}>
-                    Drag and drop your resume here
-                  </p>
-                  <p className="text-sm mb-4" style={{ color: '#143AA2' }}>
-                    or click to browse (PDF only, max 5MB)
-                  </p>
-                  <label className="inline-block">
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      disabled={submitMutation.isPending}
-                    />
-                    <span
-                      className="px-6 py-2 rounded font-semibold cursor-pointer hover:opacity-90 inline-block"
-                      style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-                    >
-                      Choose File
-                    </span>
-                  </label>
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3">
+                    <UploadCloud size={24} />
+                  </div>
+                  <p className="font-medium text-gray-900">Click to upload or drag and drop</p>
+                  <p className="text-sm text-gray-500 mt-1">PDF format only (Max 5MB)</p>
                 </div>
               )}
             </div>
-            <p className="text-xs mt-2" style={{ color: '#143AA2' }}>
-              * Your resume will be automatically parsed in the background (takes 3-5 minutes)
-            </p>
           </div>
 
           {/* Cover Letter */}
           <div>
-            <h3 className="text-lg font-bold mb-3" style={{ color: '#04060D' }}>
-              Cover Letter <span className="text-sm font-normal">(Optional)</span>
-            </h3>
+            <label htmlFor="coverLetter" className="block text-sm font-medium mb-2 text-gray-700">
+              Cover Letter (Optional)
+            </label>
             <textarea
+              id="coverLetter"
+              rows="4"
               value={coverLetter}
               onChange={(e) => setCoverLetter(e.target.value)}
-              rows="6"
-              placeholder="Tell us why you're a great fit for this position..."
-              className="w-full px-4 py-3 rounded border-2 focus:outline-none"
-              style={{ backgroundColor: '#fff', borderColor: '#143AA2', color: '#04060D' }}
-              disabled={submitMutation.isPending}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all text-sm resize-none"
+              placeholder="Tell us why you're a great fit for this role..."
             />
           </div>
 
-          {/* Submit Buttons */}
-          <div className="flex gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={submitMutation.isPending || !resumeFile || success}
-              className="flex-1 py-3 rounded-lg font-bold transition-colors hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: '#143AA2', color: '#D3D4D7' }}
-            >
-              {submitMutation.isPending ? 'Submitting...' : success ? 'Moving to Video Interview...' : 'Next: Video Interview'}
-            </button>
+          {/* Footer Actions */}
+          <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              disabled={submitMutation.isPending}
-              className="px-8 py-3 rounded-lg font-semibold transition-colors hover:opacity-90"
-              style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
+              className="px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
             >
               Cancel
             </button>
+            <button
+              type="submit"
+              disabled={submitMutation.isPending || success}
+              className="px-8 py-2.5 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-md shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {submitMutation.isPending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Submitting...
+                </>
+              ) : (
+                <>Submit Application <ArrowRight size={16} /></>
+              )}
+            </button>
           </div>
-        </form>
+          </form>
         )}
 
-        {/* Body - Step 2: Video Interview */}
+        {/* Step 2: Video Interview */}
         {step === 2 && showVideoInterview && applicationId && (
-          <div className="p-6">
-            <VideoInterview
-              applicationId={applicationId}
-              onComplete={handleVideoComplete}
-              onCancel={handleVideoCancel}
-            />
+          <div className="flex-1 overflow-hidden bg-gray-100 p-4 rounded-b-2xl">
+            <VideoInterview jobId={job._id} applicationId={applicationId} onComplete={handleVideoComplete} onCancel={handleVideoCancel} />
           </div>
         )}
       </div>
