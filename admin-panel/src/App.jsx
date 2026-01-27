@@ -5,9 +5,10 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
-import JobsList from './pages/JobsList';
-import JobDetail from './pages/JobDetail';
-import MyApplications from './pages/MyApplications';
+import JobList from './pages/JobList';
+import JobForm from './pages/JobForm';
+import ApplicationsList from './pages/ApplicationsList';
+import ApplicationDetail from './pages/ApplicationDetail';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -80,23 +81,39 @@ function AppRoutes() {
         path="/jobs"
         element={
           <ProtectedRoute>
-            <JobsList />
+            <JobList />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/jobs/:id"
+        path="/jobs/create"
         element={
           <ProtectedRoute>
-            <JobDetail />
+            <JobForm />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/applications"
+        path="/jobs/edit/:id"
         element={
           <ProtectedRoute>
-            <MyApplications />
+            <JobForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/jobs/:jobId/applications"
+        element={
+          <ProtectedRoute>
+            <ApplicationsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/applications/:id"
+        element={
+          <ProtectedRoute>
+            <ApplicationDetail />
           </ProtectedRoute>
         }
       />
