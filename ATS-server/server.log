@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (3) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+ATS server is running on port 5001
+MongoDB connected successfully

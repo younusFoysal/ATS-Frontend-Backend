@@ -23,5 +23,11 @@ export const applicationAPI = {
   getVideoAnalysis: async (applicationId) => {
     const response = await api.get(`/api/video/analysis/${applicationId}`);
     return response.data;
+  },
+
+  // Evaluate candidate
+  evaluateCandidate: async (evaluationData) => {
+    const response = await api.post('http://127.0.0.1:3001/evaluate-candidate', evaluationData);
+    return response.data;
   }
 };

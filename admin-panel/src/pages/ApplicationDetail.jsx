@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationAPI } from '../api/applicationAPI';
+import EvaluationModal from '../components/EvaluationModal';
 
 const ApplicationDetail = () => {
   const navigate = useNavigate();
@@ -9,6 +10,8 @@ const ApplicationDetail = () => {
   const queryClient = useQueryClient();
   const [selectedStatus, setSelectedStatus] = useState('');
   const [notes, setNotes] = useState('');
+  const [showEvaluationModal, setShowEvaluationModal] = useState(false);
+  const [evaluationData, setEvaluationData] = useState(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['application', id],
@@ -22,6 +25,17 @@ const ApplicationDetail = () => {
       setSelectedStatus('');
       setNotes('');
     },
+  });
+
+  const evaluateMutation = useMutation({
+    mutationFn: (data) => applicationAPI.evaluateCandidate(data),
+    onSuccess: (data) => {
+      setEvaluationData(data);
+    },
+    onError: (error) => {
+      console.error('Evaluation error:', error);
+      alert('Failed to evaluate candidate. Please try again.');
+    }
   });
 
   if (isLoading) {
@@ -47,6 +61,34 @@ const ApplicationDetail = () => {
     if (selectedStatus) {
       updateStatusMutation.mutate({ status: selectedStatus, notes });
     }
+  };
+
+  const handleEvaluate = () => {
+    setShowEvaluationModal(true);
+    setEvaluationData(null);
+
+    // Prepare evaluation data
+    const evaluationPayload = {
+      resume: {
+        name: application.parsedResumeData?.name || application.applicantName,
+        email: application.parsedResumeData?.email || application.applicantEmail,
+        phone: application.parsedResumeData?.phone || '',
+        skills: application.parsedResumeData?.skills || [],
+        education: application.parsedResumeData?.education || [],
+        experience: application.parsedResumeData?.experience || [],
+        experience_years: application.parsedResumeData?.experience_years || 0
+      },
+      interview: {
+        emotions: videoAnalysis?.emotions || {},
+        subtitles: videoAnalysis?.subtitles || {},
+        video_metadata: videoAnalysis?.video_metadata || {}
+      },
+      videoInterviewUrl: application.videoInterviewUrl || '',
+      job_description: application.jobId || {},
+      job_title: application.jobId?.title || ''
+    };
+
+    evaluateMutation.mutate(evaluationPayload);
   };
 
   const getEmotionColor = (emotion) => {
@@ -150,9 +192,19 @@ const ApplicationDetail = () => {
 
         {/* Resume Section */}
         <div className="mb-8 p-6 rounded-lg" style={{ backgroundColor: '#D3D4D7' }}>
-          <h2 className="text-2xl font-bold mb-4" style={{ color: '#04060D' }}>
-            📄 Resume Information
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold" style={{ color: '#04060D' }}>
+              📄 Resume Information
+            </h2>
+            <button
+              onClick={handleEvaluate}
+              disabled={evaluateMutation.isPending}
+              className="px-6 py-3 rounded-lg font-bold transition-colors hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: '#3E8DE3', color: '#04060D' }}
+            >
+              {evaluateMutation.isPending ? 'Evaluating...' : '🎯 Evaluate Candidate'}
+            </button>
+          </div>
 
           <div className="mb-4">
             <p className="text-lg" style={{ color: '#04060D' }}>
@@ -635,6 +687,14 @@ const ApplicationDetail = () => {
           </div>
         )}
       </div>
+
+      {/* Evaluation Modal */}
+      <EvaluationModal
+        isOpen={showEvaluationModal}
+        onClose={() => setShowEvaluationModal(false)}
+        evaluation={evaluationData}
+        isLoading={evaluateMutation.isPending}
+      />
     </div>
   );
 };

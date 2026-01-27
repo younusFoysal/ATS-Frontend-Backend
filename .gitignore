@@ -6,6 +6,15 @@ get-jobs/node_modules
 get-jobs/dist
 get-jobs/.env
 
+admin-panel/node_modules
+admin-panel/dist
+admin-panel/.env
+
+*.mp4
+.mp4*
+*.pdf
+.pdf*
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
